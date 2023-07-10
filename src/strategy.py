@@ -1,56 +1,55 @@
-# -*- coding: utf-8 -*-
+
 from backtesting import Backtest, Strategy
 from backtesting.lib import crossover
+import pandas_ta as ta
+import pandas as pd
 
-from backtesting.test import SMA, GOOG
-
-# https://kernc.github.io/backtesting.py/doc/examples/Strategies%20Library.html
-
-
-class Funding(Strategy):
+class Ema(Strategy):
+    n1=20
+    n2=80
+    n3=150
     def init(self):
-        pass
+        close = self.data.Close
+        self.ema20 = self.I(ta.ema, close.s, self.n1)
+        self.ema80 = self.I(ta.ema, close.s, self.n2)
+        self.ema150 = self.I(ta.ema, close.s, self.n2)
 
     def next(self):
+        price = self.data.Close
+        if crossover(self.ema20, self.ema80):
+            self.position.close()
+            self.buy()
+
+        elif crossover(self.ema80, self.ema20):
+            self.position.close()
+            self.sell()
         pass
     
-    def generate_name():
-        return "Strategy Name"
-
-    def generate_description():
-        return "Make Money"
-
-    def generate_parameters():
-        """
-        Steps:
-            1. Load the prices for the stocks
-            2. Preprocess the data used in the strategy
-            3. Combine the indicators into a single dataframe and add the strategy
-            3. Create the backtest class and run the backtest
-            4. Save the results into a pdf file in the output folder
-        """
-        return "Parameters"
-    
-    def generate_plot():
-        # fileNameOutput=f"sandbox/output/{bt._strategy.__name__}.html"
-        # bt.plot(filename=fileNameOutput)
-        return "Plot"
-    
-    def generate_metrics():
-        return "Metrics"
-    
-    def generate_pickle():
-        return "Pickle"
-    
-    def generate_results():
-        return "Results"
-    
-    def generate_report():
-        # TODO: Generate a report
-        return "Strategy Report"
+    def name():
+        return " Exponential Moving Average"
 
 
-# bt = Backtest(df, Funding,cash=25000, commission=.002, exclusive_orders=True)
 
-# output = bt.run()
-# output
+
+
+class RsiOscillator(Strategy):
+
+    upper_bound = 70
+    lower_bound = 30
+    rsi_window = 14
+
+    # Do as much initial computation as possible
+    def init(self):
+        self.rsi = self.I(ta.rsi, pd.Series(self.data.Close), self.rsi_window)
+
+    # Step through bars one by one
+    # Note that multiple buys are a thing here
+    def next(self):
+        if crossover(self.rsi, self.upper_bound):
+            self.position.close()
+        elif crossover(self.lower_bound, self.rsi):
+            self.buy()
+
+    def name():
+        return " "
+

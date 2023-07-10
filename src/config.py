@@ -15,7 +15,7 @@ path = PARENT_DIR+'/sample.env'
 
 load_dotenv(find_dotenv(path)) # take environment variables from .env.
 
-FMP_API_KEY = os.getenv("17c09553207c6d6e7bab10003e604aa8")
+FMP_API_KEY = os.getenv("FMP_API_KEY")
 BINANCE_API_KEY = os.getenv("BINANCE_API_KEY")
 
 BASE_URL_FMP = "https://financialmodelingprep.com/api/v3"
