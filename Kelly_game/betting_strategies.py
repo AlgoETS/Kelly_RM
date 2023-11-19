@@ -337,7 +337,15 @@ class BetLikeADummy(BaseGame):
             return self.wager_big
         else:
             return self.wager_small
+class aon(BaseGame):
 
+    """Strategy is to bet big when you see a string of tails. Not a good strategy, but it is something people do!"""
+
+    
+    wager_small = 100
+
+    def _strategy(self, flips_so_far: np.array, W: float) -> float:
+            return self.wager_small
 
 class KellyWithAnEstimate(BaseGame):
 
